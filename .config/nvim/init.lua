@@ -202,16 +202,6 @@ require("lazy").setup({
   { "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme("tokyonight") end },
 })
 
--- --- DETECCIÓN DE ARCHIVOS AIKEN ---
-vim.filetype.add({
-  extension = {
-    ak = 'aiken',
-  },
-})
-
--- Registrar el lenguaje Aiken en Tree-sitter
-vim.treesitter.language.register('aiken', 'aiken')
-
 -- --- AJUSTES DE INTERFAZ ---
 vim.opt.number = true          -- Muestra números de línea
 vim.opt.relativenumber = true  -- Números relativos (ayuda a saltar líneas rápido)
