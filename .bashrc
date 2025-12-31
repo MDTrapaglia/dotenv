@@ -114,6 +114,7 @@ fi
 
 alias myip="curl ifconfig.me -4"
 alias v=nvim
+alias vv="nvim ~/.config/nvim/init.lua"
 alias reload="source ~/.bashrc"
 alias vc="nvim ~/.bashrc"
 alias gst="git status"

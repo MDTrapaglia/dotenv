@@ -124,6 +124,7 @@ alias l='ls -CF'
 # Custom aliases
 alias myip="curl ifconfig.me -4"
 alias v=nvim
+alias vv="nvim ~/.config/nvim/init.lua"
 alias reload="source ~/.zshrc"
 alias vc="nvim ~/.zshrc"
 alias gst="git status"
@@ -189,3 +190,4 @@ alias gem='ask_gemini'
 
 # Dotfiles bare repository alias
 alias dotfiles='/usr/bin/git --git-dir=$HOME/projects/dotfiles/ --work-tree=$HOME'
+source <(fzf --zsh)

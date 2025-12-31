@@ -41,6 +41,39 @@ require("lazy").setup({
   -- Autocompletado
   { "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-nvim-lsp" } },
 
+  -- Comentar/Descomentar código
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup()
+    end,
+  },
+
+  -- Fuzzy Finder (Telescope)
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("telescope").setup()
+    end,
+  },
+
+  -- Explorador de archivos en árbol
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("nvim-tree").setup({
+        view = {
+          width = 30,
+        },
+      })
+    end,
+  },
+
+  -- Iconos para el tree y otros plugins
+  { "nvim-tree/nvim-web-devicons" },
+
   -- Colores
   { "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme("tokyonight") end },
 })
@@ -74,9 +107,21 @@ keymap('n', '<Esc>', ':nohlsearch<CR>', { silent = true })
 -- Guardar con Ctrl + S (opcional, muy útil)
 keymap('n', '<C-s>', ':w<CR>', { silent = true })
 keymap('n', '<C-q>', ':q<CR>', { silent = true })
+keymap('n', '<C-a>', ':q!')
 -- Moverse entre ventanas fácilmente
 keymap('n', '<C-h>', '<C-w>h')
 keymap('n', '<C-j>', '<C-w>j')
 keymap('n', '<C-k>', '<C-w>k')
 keymap('n', '<C-l>', '<C-w>l')
+
+-- --- ATAJOS PARA PLUGINS ---
+-- Telescope (Fuzzy Finder)
+keymap('n', '<leader>ff', ':Telescope find_files<CR>', { desc = 'Buscar archivos' })
+keymap('n', '<leader>fg', ':Telescope live_grep<CR>', { desc = 'Buscar texto en archivos' })
+keymap('n', '<leader>fb', ':Telescope buffers<CR>', { desc = 'Buscar en buffers abiertos' })
+keymap('n', '<leader>fh', ':Telescope help_tags<CR>', { desc = 'Buscar en ayuda' })
+
+-- nvim-tree (Explorador de archivos)
+keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
+keymap('n', '<C-n>', ':NvimTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
 
