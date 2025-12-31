@@ -11,15 +11,53 @@ vim.opt.rtp:prepend(lazypath)
 -- --- 2. CONFIGURACIÓN DE PLUGINS ---
 require("lazy").setup({
   -- LSP Config (Base para servidores de lenguaje)
-  { 
-    "neovim/nvim-lspconfig",
-    dependencies = { "hrsh7th/cmp-nvim-lsp" }
+  {
+    "hrsh7th/cmp-nvim-lsp",
+    config = function()
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      -- Función de on_attach reutilizable para todos los LSPs
+      local on_attach = function(client, bufnr)
+        -- Keymaps para LSP
+        local opts = { buffer = bufnr, noremap = true, silent = true }
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+        vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+        vim.keymap.set('n', '<leader>f', function()
+          vim.lsp.buf.format({ async = true })
+        end, opts)
+      end
+
+      -- Configuración del LSP de Aiken usando la nueva API vim.lsp.config
+      vim.lsp.config.aiken = {
+        cmd = { 'aiken', 'lsp' },
+        filetypes = { 'aiken' },
+        root_dir = vim.fs.root(0, { 'aiken.toml' }),
+        capabilities = capabilities,
+        on_attach = on_attach,
+      }
+
+      -- Habilitar el servidor Aiken automáticamente
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'aiken',
+        callback = function()
+          vim.lsp.enable('aiken')
+        end,
+      })
+    end,
   },
 
-  -- TypeScript: Usaremos el servidor estándar para máxima compatibilidad con Nvim 0.10
+  -- TypeScript: Usaremos el servidor estándar para máxima compatibilidad con Nvim 0.11
   {
     "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("typescript-tools").setup({
         on_attach = function(client, bufnr)
@@ -55,37 +93,6 @@ require("lazy").setup({
             includeInlayFunctionParameterTypeHints = true,
           },
         },
-      })
-    end,
-  },
-
-  -- Aiken LSP
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      local lspconfig = require("lspconfig")
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-      -- Configuración del LSP de Aiken
-      lspconfig.aiken.setup({
-        capabilities = capabilities,
-        on_attach = function(client, bufnr)
-          -- Keymaps para LSP
-          local opts = { buffer = bufnr, noremap = true, silent = true }
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-          vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
-          vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-          vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-          vim.keymap.set('n', '<leader>f', function()
-            vim.lsp.buf.format({ async = true })
-          end, opts)
-        end,
       })
     end,
   },
