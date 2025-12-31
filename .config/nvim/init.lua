@@ -191,14 +191,11 @@ require("lazy").setup({
 
   -- Explorador de archivos en árbol
   {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    "preservim/nerdtree",
     config = function()
-      require("nvim-tree").setup({
-        view = {
-          width = 30,
-        },
-      })
+      -- Configuración de NERDTree
+      vim.g.NERDTreeWinSize = 30
+      vim.g.NERDTreeShowHidden = 1  -- Mostrar archivos ocultos por defecto
     end,
   },
 
@@ -267,7 +264,8 @@ keymap('n', '<leader>fg', ':Telescope live_grep<CR>', { desc = 'Buscar texto en 
 keymap('n', '<leader>fb', ':Telescope buffers<CR>', { desc = 'Buscar en buffers abiertos' })
 keymap('n', '<leader>fh', ':Telescope help_tags<CR>', { desc = 'Buscar en ayuda' })
 
--- nvim-tree (Explorador de archivos)
-keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
-keymap('n', '<C-n>', ':NvimTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
+-- NERDTree (Explorador de archivos)
+keymap('n', '<leader>e', ':NERDTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
+keymap('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
+keymap('n', '<leader>nf', ':NERDTreeFind<CR>', { desc = 'Encontrar archivo actual en NERDTree' })
 
