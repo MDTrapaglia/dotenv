@@ -59,6 +59,37 @@ require("lazy").setup({
     end,
   },
 
+  -- Aiken LSP
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      local lspconfig = require("lspconfig")
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      -- Configuración del LSP de Aiken
+      lspconfig.aiken.setup({
+        capabilities = capabilities,
+        on_attach = function(client, bufnr)
+          -- Keymaps para LSP
+          local opts = { buffer = bufnr, noremap = true, silent = true }
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+          vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+          vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+          vim.keymap.set('n', '<leader>f', function()
+            vim.lsp.buf.format({ async = true })
+          end, opts)
+        end,
+      })
+    end,
+  },
+
   -- Treesitter con protección
   {
     "nvim-treesitter/nvim-treesitter",
@@ -70,7 +101,12 @@ require("lazy").setup({
       ts.setup({
         ensure_installed = { "typescript", "tsx", "javascript", "lua", "vim" },
         highlight = { enable = true },
+        -- Agregar parsers personalizados
+        parser_install_dir = vim.fn.stdpath("data") .. "/tree-sitter-parsers",
       })
+
+      -- Añadir el directorio de parsers personalizados al runtimepath
+      vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/tree-sitter-parsers")
     end,
   },
 
@@ -166,6 +202,16 @@ require("lazy").setup({
   { "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme("tokyonight") end },
 })
 
+-- --- DETECCIÓN DE ARCHIVOS AIKEN ---
+vim.filetype.add({
+  extension = {
+    ak = 'aiken',
+  },
+})
+
+-- Registrar el lenguaje Aiken en Tree-sitter
+vim.treesitter.language.register('aiken', 'aiken')
+
 -- --- AJUSTES DE INTERFAZ ---
 vim.opt.number = true          -- Muestra números de línea
 vim.opt.relativenumber = true  -- Números relativos (ayuda a saltar líneas rápido)
@@ -208,7 +254,7 @@ local keymap = vim.keymap.set
 -- Limpiar resaltado de búsqueda con Esc
 keymap('n', '<Esc>', ':nohlsearch<CR>', { silent = true })
 -- Guardar con Ctrl + S (opcional, muy útil)
-keymap('n', '<C-s>', ':w<CR>', { silent = true })
+keymap('n', '<C-w>', ':w<CR>', { silent = true })
 keymap('n', '<C-q>', ':q<CR>', { silent = true })
 keymap('n', '<C-a>', ':q!')
 -- Moverse entre ventanas fácilmente
