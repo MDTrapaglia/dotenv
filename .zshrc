@@ -130,6 +130,7 @@ alias vc="nvim ~/.zshrc"
 alias gst="git status"
 alias gsu="git status -uno"
 alias cooler="cat /sys/class/thermal/cooling_device0/cur_state"
+alias cdi='cd "$(find . -type d | fzf)"'
 
 # Bitcoin aliases
 alias bcinfo="bitcoin-cli -rpcport=8612 getblockchaininfo"
@@ -191,3 +192,8 @@ alias gem='ask_gemini'
 # Dotfiles bare repository alias
 alias dotfiles='/usr/bin/git --git-dir=$HOME/projects/dotfiles/ --work-tree=$HOME'
 source <(fzf --zsh)
+
+# Path copy/paste aliases
+alias cpath='mkdir -p ~/scratch && pwd > ~/scratch/current_path.txt && echo "Path guardado: $(pwd)"'
+alias ppath='cd "$(cat ~/scratch/current_path.txt 2>/dev/null || echo .)" && pwd'
+alias dotpush="dotfiles commit -am more; dotfiles push"

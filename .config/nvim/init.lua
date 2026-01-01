@@ -204,6 +204,11 @@ require("lazy").setup({
 
   -- Colores
   { "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme("tokyonight") end },
+}, {
+  -- Opciones de Lazy.nvim
+  rocks = {
+    enabled = false,  -- Deshabilita luarocks ya que no se necesita
+  },
 })
 
 -- --- AJUSTES DE INTERFAZ ---
@@ -241,13 +246,17 @@ vim.opt.smartindent = true     -- Indentación inteligente automática
 vim.opt.clipboard = 'unnamedplus' -- Usa el portapapeles del sistema
 vim.opt.updatetime = 250          -- Tiempo de respuesta más rápido (ms)
 vim.opt.scrolloff = 8             -- Mantiene 8 líneas visibles arriba/abajo al bajar
-vim.g.mapleader = '-'             -- Define la tecla "Espacio" como líder
+vim.g.mapleader = ','             -- Define la tecla "Espacio" como líder
 
 -- --- ATAJOS DE TECLADO BÁSICOS ---
 local keymap = vim.keymap.set
+-- Salir de insert mode con jk o kj
+keymap('i', 'jk', '<Esc>', { silent = true })
+keymap('i', 'kj', '<Esc>', { silent = true })
 -- Limpiar resaltado de búsqueda con Esc
 keymap('n', '<Esc>', ':nohlsearch<CR>', { silent = true })
 -- Guardar con Ctrl + S (opcional, muy útil)
+keymap('n', '<C-s>', ':w<CR>', { silent = true })
 keymap('n', '<C-w>', ':w<CR>', { silent = true })
 keymap('n', '<C-q>', ':q<CR>', { silent = true })
 keymap('n', '<C-a>', ':q!')
@@ -266,6 +275,32 @@ keymap('n', '<leader>fh', ':Telescope help_tags<CR>', { desc = 'Buscar en ayuda'
 
 -- NERDTree (Explorador de archivos)
 keymap('n', '<leader>e', ':NERDTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
-keymap('n', '<C-n>', ':NERDTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
 keymap('n', '<leader>nf', ':NERDTreeFind<CR>', { desc = 'Encontrar archivo actual en NERDTree' })
+
+-- Line numbering toggles
+-- Toggle entre numeración absoluta y relativa
+keymap('n', '<leader>rn', function()
+  vim.opt.relativenumber = not vim.opt.relativenumber:get()
+end, { desc = 'Toggle numeración absoluta/relativa' })
+
+-- Toggle para activar/desactivar line numbering
+keymap('n', '<leader>n', function()
+  local number_is_on = vim.opt.number:get() or vim.opt.relativenumber:get()
+  if number_is_on then
+    -- Desactivar ambos
+    vim.opt.number = false
+    vim.opt.relativenumber = false
+  else
+    -- Activar number (vuelve al estado por defecto)
+    vim.opt.number = true
+  end
+end, { desc = 'Toggle numeración de líneas on/off' })
+
+-- Gestión de sesiones
+keymap('n', '<leader>w', ':mksession! ~/.config/nvim/session.vim<CR>', { desc = 'Guardar sesión actual' })
+keymap('n', '<leader>l', ':source ~/.config/nvim/session.vim<CR>', { desc = 'Cargar última sesión' })
+
+-- Navegación entre buffers
+keymap('n', '<C-p>', ':bprevious<CR>', { desc = 'Buffer anterior' })
+keymap('n', '<C-n>', ':bnext<CR>', { desc = 'Siguiente buffer' })
 
