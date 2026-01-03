@@ -189,13 +189,22 @@ require("lazy").setup({
     end,
   },
 
-  -- Explorador de archivos en árbol
+  -- Explorador de archivos en árbol (nvim-tree en lugar de NERDTree)
   {
-    "preservim/nerdtree",
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      -- Configuración de NERDTree
-      vim.g.NERDTreeWinSize = 30
-      vim.g.NERDTreeShowHidden = 1  -- Mostrar archivos ocultos por defecto
+      require("plugins.nvim-tree")
+    end,
+  },
+
+  -- Barra de buffers superior
+  {
+    "akinsho/bufferline.nvim",
+    version = "*",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("plugins.bufferline")
     end,
   },
 
@@ -253,6 +262,13 @@ local keymap = vim.keymap.set
 -- Salir de insert mode con jk o kj
 keymap('i', 'jk', '<Esc>', { silent = true })
 keymap('i', 'kj', '<Esc>', { silent = true })
+
+-- Moverse en Insert Mode con Ctrl + hjkl
+keymap('i', '<C-h>', '<Left>', { silent = true, desc = 'Mover cursor izquierda en Insert' })
+keymap('i', '<C-j>', '<Down>', { silent = true, desc = 'Mover cursor abajo en Insert' })
+keymap('i', '<C-k>', '<Up>', { silent = true, desc = 'Mover cursor arriba en Insert' })
+keymap('i', '<C-l>', '<Right>', { silent = true, desc = 'Mover cursor derecha en Insert' })
+
 -- Limpiar resaltado de búsqueda con Esc
 keymap('n', '<Esc>', ':nohlsearch<CR>', { silent = true })
 -- Guardar con Ctrl + S (opcional, muy útil)
@@ -273,15 +289,15 @@ keymap('n', '<leader>fg', ':Telescope live_grep<CR>', { desc = 'Buscar texto en 
 keymap('n', '<leader>fb', ':Telescope buffers<CR>', { desc = 'Buscar en buffers abiertos' })
 keymap('n', '<leader>fh', ':Telescope help_tags<CR>', { desc = 'Buscar en ayuda' })
 
--- NERDTree (Explorador de archivos)
-keymap('n', '<leader>e', ':NERDTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
-keymap('n', '<leader>nf', ':NERDTreeFind<CR>', { desc = 'Encontrar archivo actual en NERDTree' })
+-- nvim-tree (Explorador de archivos)
+keymap('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle explorador de archivos' })
+keymap('n', '<leader>nf', ':NvimTreeFindFile<CR>', { desc = 'Encontrar archivo actual en nvim-tree' })
 
 -- Line numbering toggles
--- Toggle entre numeración absoluta y relativa
-keymap('n', '<leader>rn', function()
+-- Toggle numeración relativa con Ctrl+n
+keymap('n', '<C-n>', function()
   vim.opt.relativenumber = not vim.opt.relativenumber:get()
-end, { desc = 'Toggle numeración absoluta/relativa' })
+end, { desc = 'Toggle numeración relativa' })
 
 -- Toggle para activar/desactivar line numbering
 keymap('n', '<leader>n', function()
@@ -300,7 +316,19 @@ end, { desc = 'Toggle numeración de líneas on/off' })
 keymap('n', '<leader>w', ':mksession! ~/.config/nvim/session.vim<CR>', { desc = 'Guardar sesión actual' })
 keymap('n', '<leader>l', ':source ~/.config/nvim/session.vim<CR>', { desc = 'Cargar última sesión' })
 
--- Navegación entre buffers
-keymap('n', '<C-p>', ':bprevious<CR>', { desc = 'Buffer anterior' })
-keymap('n', '<C-n>', ':bnext<CR>', { desc = 'Siguiente buffer' })
+-- Navegación entre buffers con bufferline
+keymap('n', '<C-i>', ':BufferLineCycleNext<CR>', { desc = 'Siguiente buffer' })
+keymap('n', '<C-o>', ':BufferLineCyclePrev<CR>', { desc = 'Buffer anterior' })
+keymap('n', '<leader>x', ':bdelete<CR>', { desc = 'Cerrar buffer actual' })
+keymap('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Seleccionar buffer específico' })
+
+-- --- AUTO-COMANDOS ---
+-- Auto-abrir nvim-tree cuando se inicia sin archivo
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    if vim.fn.argc() == 0 then
+      require("nvim-tree.api").tree.open()
+    end
+  end,
+})
 

@@ -129,6 +129,13 @@ alias reload="source ~/.zshrc"
 alias vc="nvim ~/.zshrc"
 alias gst="git status"
 alias gsu="git status -uno"
+alias gps="git push"
+alias gpl="git pull"
+
+# Git commit -am with quoted message
+gcma() {
+    git commit -am "$*"
+}
 alias cooler="cat /sys/class/thermal/cooling_device0/cur_state"
 alias cdi='cd "$(find . -type d | fzf)"'
 
